@@ -18,9 +18,10 @@ public class AuthService {
     public User authenticated() {
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            return userRepository.findByEmail(username);
+            return userRepository.findByEmail(username).orElseThrow();
         } catch (Exception e) {
             throw new UnauthorizedException("Usuário inválido");
         }
     }
+
 }
