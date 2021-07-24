@@ -1,5 +1,4 @@
-package com.devsuperior.movieflix.controllers;
-
+package com.devsuperior.movieflix.resources;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,14 +19,14 @@ import com.devsuperior.movieflix.tests.TokenUtil;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class UserControllerIT {
+public class GenreControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private TokenUtil tokenUtil;
-
+	
 	private String visitorUsername;
 	private String visitorPassword;
 	private String memberUsername;
@@ -41,46 +40,52 @@ public class UserControllerIT {
 		memberUsername = "ana@gmail.com";
 		memberPassword = "123456";
 	}
-	
+
 	@Test
-	public void getProfileShouldReturnSelfWhenVisitorLogged() throws Exception {
-		
-		String accessToken = tokenUtil.obtainAccessToken(mockMvc, visitorUsername, visitorPassword);
+	public void findAllShouldReturnUnauthorizedWhenNotValidToken() throws Exception {
 
 		ResultActions result =
-				mockMvc.perform(get("/users/profile")
-					.header("Authorization", "Bearer " + accessToken)
-					.accept(MediaType.APPLICATION_JSON));
-		
-		result.andExpect(status().isOk());
-		result.andExpect(jsonPath("$.id").isNotEmpty());
-		result.andExpect(jsonPath("$.name").isNotEmpty());
-		result.andExpect(jsonPath("$.email").value(visitorUsername));
-	}
+				mockMvc.perform(get("/genres")
+					.contentType(MediaType.APPLICATION_JSON));
 
+		result.andExpect(status().isUnauthorized());
+	}
+	
 	@Test
-	public void getProfileShouldReturnSelfWhenMemberLogged() throws Exception {
+	public void findAllShouldReturnAllGenresWhenVisitorAuthenticated() throws Exception {
+
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, visitorUsername, visitorPassword);
 		
+		ResultActions result =
+				mockMvc.perform(get("/genres")
+					.header("Authorization", "Bearer " + accessToken)
+					.contentType(MediaType.APPLICATION_JSON));
+
+		result.andExpect(status().isOk());
+		result.andExpect(jsonPath("$[0].id").value(1L));
+		result.andExpect(jsonPath("$[0].name").value("Comédia"));
+		result.andExpect(jsonPath("$[1].id").value(2L));
+		result.andExpect(jsonPath("$[1].name").value("Terror"));
+		result.andExpect(jsonPath("$[2].id").value(3L));
+		result.andExpect(jsonPath("$[2].name").value("Drama"));
+	}
+	
+	@Test
+	public void findAllShouldReturnAllGenresWhenMemberAuthenticated() throws Exception {
+
 		String accessToken = tokenUtil.obtainAccessToken(mockMvc, memberUsername, memberPassword);
 
 		ResultActions result =
-				mockMvc.perform(get("/users/profile")
+				mockMvc.perform(get("/genres")
 					.header("Authorization", "Bearer " + accessToken)
-					.accept(MediaType.APPLICATION_JSON));
-		
-		result.andExpect(status().isOk());
-		result.andExpect(jsonPath("$.id").isNotEmpty());
-		result.andExpect(jsonPath("$.name").isNotEmpty());
-		result.andExpect(jsonPath("$.email").value(memberUsername));
-	}
+					.contentType(MediaType.APPLICATION_JSON));
 
-	@Test
-	public void getProfileShouldReturnUnauthorizedWhenNoUserLogged() throws Exception {
-		
-		ResultActions result =
-				mockMvc.perform(get("/users/profile")
-					.accept(MediaType.APPLICATION_JSON));
-		
-		result.andExpect(status().isUnauthorized());
+		result.andExpect(status().isOk());
+		result.andExpect(jsonPath("$[0].id").value(1L));
+		result.andExpect(jsonPath("$[0].name").value("Comédia"));
+		result.andExpect(jsonPath("$[1].id").value(2L));
+		result.andExpect(jsonPath("$[1].name").value("Terror"));
+		result.andExpect(jsonPath("$[2].id").value(3L));
+		result.andExpect(jsonPath("$[2].name").value("Drama"));		
 	}
 }
