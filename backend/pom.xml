@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.devsuperior</groupId>
-	<artifactId>bds05</artifactId>
+	<artifactId>Movieflix</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>movieFlix</name>
-	<description>Bootcamp Spring React DevSuperior</description>
+	<name>Movieflix</name>
+	<description>Movie rating system</description>
 
 	<properties>
 		<java.version>11</java.version>

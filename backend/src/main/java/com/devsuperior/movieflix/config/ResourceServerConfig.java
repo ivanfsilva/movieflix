@@ -17,8 +17,7 @@ import java.util.Arrays;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**" };
-    private static final String[] VISITOR = { "/users/**" };
-    private static final String[] MEMBER = { "/users/**" };
+    private static final String[] MEMBER_POST = { "/reviews" };
 
     @Autowired
     private Environment env;
@@ -40,8 +39,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers(PUBLIC).permitAll()
-                .antMatchers(HttpMethod.GET, VISITOR).permitAll()
-                .antMatchers(MEMBER).hasRole("MEMBER")
+                .antMatchers(HttpMethod.POST, MEMBER_POST).hasAnyRole("MEMBER")
                 .anyRequest().authenticated();
     }
 }
