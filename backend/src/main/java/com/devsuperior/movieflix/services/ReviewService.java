@@ -4,14 +4,9 @@ import com.devsuperior.movieflix.dto.ReviewDTO;
 import com.devsuperior.movieflix.entities.Movie;
 import com.devsuperior.movieflix.entities.Review;
 import com.devsuperior.movieflix.entities.User;
-import com.devsuperior.movieflix.repositories.MovieRepository;
 import com.devsuperior.movieflix.repositories.ReviewRepository;
-import com.devsuperior.movieflix.repositories.UserRepository;
 import com.devsuperior.movieflix.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +29,7 @@ public class ReviewService {
             throw new ResourceNotFoundException("Entidade não encontrada");
         }
 
-        return list.stream().map(x -> new ReviewDTO(x, x.getUser())).collect(Collectors.toList());
+        return list.stream().map(r -> new ReviewDTO(r, r.getUser())).collect(Collectors.toList());
     }
 
     @Transactional
